@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public class MemberRepository {
 
-    @PersistenceContext
+    @PersistenceContext // spring boot 환경에서는 Autowired 가능 ( == RequiredArgsConstructor 가능)
     private EntityManager em;
 
     public void save(Member member) {
