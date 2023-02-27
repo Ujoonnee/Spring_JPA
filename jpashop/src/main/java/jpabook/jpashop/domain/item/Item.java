@@ -25,8 +25,7 @@ public abstract class Item {
     @ManyToMany(mappedBy = "items")
     private List<Category> categories;
 
-    // buisiness logic ==========
-
+    // business logic ==========
     public void addStock(int quantity) {
         this.stockQuantity += quantity;
     }
