@@ -4,7 +4,6 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
-
   jpa:
     hibernate:
       # app 실행 시점에 엔티티를 전부 지우고 다시 생성
@@ -14,7 +13,9 @@ spring:
         # show_sql 은 System.out 을 통해 로그를 출력하므로 지양
 #        show_sql: true
         format_sql: true
-
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
 
 # 로거를 이용해 로그를 출력
 logging:

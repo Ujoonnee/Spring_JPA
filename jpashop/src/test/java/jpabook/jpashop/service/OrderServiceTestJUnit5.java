@@ -5,6 +5,8 @@ import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.domain.item.Book;
+import jpabook.jpashop.domain.item.Item;
+import jpabook.jpashop.exception.NotEnoughStockException;
 import jpabook.jpashop.repository.OrderRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -48,11 +50,35 @@ public class OrderServiceTestJUnit5 {
     @Test
     public void 상품주문_재고수량초과() throws Exception {
         //given
-        
+        Member member = createMember();
+        Book foo책 = createBook("foo책", 10000, 10);
+
         //when
-        
+        int orderAmount = 11;
+
         //then
-        
+        assertThatThrownBy(() -> orderService.order(member.getId(), foo책.getId(), orderAmount))
+                .isInstanceOf(NotEnoughStockException.class);
+
+    }
+
+    @Test
+    public void 주문취소() throws Exception {
+        //given
+        Member member = createMember();
+        Book book = createBook("bar책", 1000000, 2);
+
+        Long orderId = orderService.order(member.getId(), book.getId(), 1);
+
+        //when
+        orderService.cancelOrder(orderId);
+        Order order = orderRepository.findOne(orderId);
+        Item item = order.getOrderItems().get(0).getItem();
+
+        //then
+        assertThat(OrderStatus.CANCEL).isEqualTo(order.getStatus());
+        assertThat(item.getStockQuantity()).isSameAs(book.getStockQuantity());
+
     }
 
     private Book createBook(String name, int price, int stockQuantity) {
